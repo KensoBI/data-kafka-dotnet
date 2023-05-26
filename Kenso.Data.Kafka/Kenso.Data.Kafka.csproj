@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>kenso</Authors>
+    <Company>Kenso Software</Company>
+    <Description>A generic Apache Kafka producer and consumer utilizing Avro for message serialization.</Description>
+    <Title>Kenso.Data.Kafka</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageTags>kensobi;kenso;kafka;producer;consumer;avro</PackageTags>
+    <RepositoryUrl>https://github.com/KensoBI/data-kafka-dotnet</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>kensobi-logo.png</PackageIcon>
+    <PackageProjectUrl>https://kensobi.com/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright 2023 Kenso Software</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\kensobi-logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chr.Avro.Confluent" Version="9.5.1" />
+    <PackageReference Include="Confluent.Kafka" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+  </ItemGroup>
+
+</Project>
