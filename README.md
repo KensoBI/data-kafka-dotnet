@@ -6,6 +6,7 @@ A generic implementation of Apache Kafka producer and consumer utilizing Avro fo
 
 - Generic Kafka pubisher implementation
 - Generic Kafka subscriber implementation
+- Sample producer and consumer apps
 - Lightweight and extendable
 - Schema registry integration with Avro serialization using [Chr.Avro](https://github.com/ch-robinson/dotnet-avro)
 - Commercial support offered by [Kenso Software](https://kensobi.com)

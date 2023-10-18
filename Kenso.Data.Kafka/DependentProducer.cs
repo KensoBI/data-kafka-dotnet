@@ -26,15 +26,23 @@ namespace Kenso.Data.Kafka
         public async Task BuildProducer()
         {
             using var registryClient = new CachedSchemaRegistryClient(
-                    new SchemaRegistryConfig
-                    {
-                        Url = _kafkaOptions.SchemaRegistries
-                    });
+                new SchemaRegistryConfig
+                {
+                    Url = _kafkaOptions.SchemaRegistries,
+                    EnableSslCertificateVerification = _kafkaOptions.EnableSslCertificateVerification,
+                    SslCaLocation = _kafkaOptions.SslCaLocation,
+                    BasicAuthUserInfo = _kafkaOptions.BasicAuthUserInfo
+                });
 
-            await EnsureTopicExists();
+            if (_kafkaOptions.EnsureTopicExists)
+            {
+                await EnsureTopicExists();
+            }
+
             _producer = await CreateProducer(registryClient);
 
         }
+
         private async Task<IProducer<TK, TV>> CreateProducer(ISchemaRegistryClient registryClient)
         {
             _logger.LogInformation("Creating Kafka producer.");
@@ -60,15 +68,15 @@ namespace Kenso.Data.Kafka
         public async Task EnsureTopicExists()
         {
             _logger.LogInformation("Checking if topic exists.");
-            if (_kafkaOptions.ProducerSettings == null || _kafkaOptions.ProducerSettings["BootstrapServers"] == null)
+            if (_kafkaOptions.BootstrapServers == null)
             {
-                throw new ArgumentException("Kafka:ProducerSettings:BootstrapServers setting nor provided!");
+                throw new ArgumentException("Kafka:BootstrapServers setting not provided!");
             }
 
             var admin = new AdminClientBuilder(
                     new AdminClientConfig
                     {
-                        BootstrapServers = _kafkaOptions.ProducerSettings["BootstrapServers"]
+                        BootstrapServers = _kafkaOptions.BootstrapServers,
                     })
                 .Build();
 

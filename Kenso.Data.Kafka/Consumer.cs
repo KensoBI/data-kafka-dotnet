@@ -9,16 +9,14 @@ namespace Kenso.Data.Kafka
     public class Consumer<TK, TV> : IDisposable
     {
         private readonly ILogger<Consumer<TK, TV>> _logger;
+        private readonly KafkaOptions _kafkaOptions;
         private readonly IMessageHandler<TK, TV> _messageHandler;
-        private readonly string _schemaRegistries;
-        private readonly string _topic;
-        private readonly string _bootstrapServers;
-        private readonly string _groupId;
         private IConsumer<TK, TV>? _consumer;
 
         public Consumer(ILogger<Consumer<TK, TV>> logger, IOptions<KafkaOptions> kafkaOptions, IMessageHandler<TK, TV> messageHandler)
         {
             _logger = logger;
+            _kafkaOptions = kafkaOptions.Value;
             _messageHandler = messageHandler;
 
             if (string.IsNullOrEmpty(kafkaOptions.Value.SchemaRegistries))
@@ -35,11 +33,6 @@ namespace Kenso.Data.Kafka
             {
                 throw new ArgumentException("Kafka:ProducerSettings:BootstrapServers setting nor provided!");
             }
-
-            _schemaRegistries = kafkaOptions.Value.SchemaRegistries;
-            _topic = kafkaOptions.Value.Topic;
-            _bootstrapServers = kafkaOptions.Value.BootstrapServers;
-            _groupId = kafkaOptions.Value.GroupId;
         }
 
         public async Task StartConsumerLoop(CancellationToken cancellationToken)
@@ -53,7 +46,7 @@ namespace Kenso.Data.Kafka
                 {
                     var cr = _consumer.Consume(cancellationToken);
                     await _messageHandler.Handle(cr.Message);
-
+                    _consumer.Commit(cr);
                     _logger.LogInformation($"{cr.Message.Key}: {cr.Message.Value}");
                 }
                 catch (OperationCanceledException)
@@ -81,15 +74,18 @@ namespace Kenso.Data.Kafka
 
         public IConsumer<TK, TV> Init()
         {
-            _logger.LogInformation($"Initializing consumer for topic:{_topic}, groupId: {_groupId}, bootstrapServers: {_bootstrapServers}");
+            _logger.LogInformation($"Initializing consumer for topic:{_kafkaOptions.Topic}, groupId: {_kafkaOptions.GroupId}, bootstrapServers: {_kafkaOptions.BootstrapServers}");
 
             var registryClient = new CachedSchemaRegistryClient(
                 new SchemaRegistryConfig
                 {
-                    Url = _schemaRegistries
+                    Url = _kafkaOptions.SchemaRegistries,
+                    EnableSslCertificateVerification = _kafkaOptions.EnableSslCertificateVerification,
+                    SslCaLocation = _kafkaOptions.SslCaLocation,
+                    BasicAuthUserInfo = _kafkaOptions.BasicAuthUserInfo
                 });
             var consumer = CreateConsumer(registryClient);
-            consumer.Subscribe(_topic);
+            consumer.Subscribe(_kafkaOptions.Topic);
             return consumer;
         }
 
@@ -98,12 +94,18 @@ namespace Kenso.Data.Kafka
             return new ConsumerBuilder<TK, TV>(
                     new ConsumerConfig
                     {
-                        BootstrapServers = _bootstrapServers,
+                        BootstrapServers = _kafkaOptions.BootstrapServers,
+                        SecurityProtocol = _kafkaOptions.SecurityProtocol,
+                        SslCaLocation = _kafkaOptions.SslCaLocation,
+                        SslCertificateLocation = _kafkaOptions.SslCertificateLocation,
+                        SslKeyLocation = _kafkaOptions.SslKeyLocation,
+                        SslEndpointIdentificationAlgorithm = _kafkaOptions.SslEndpointIdentificationAlgorithm,
                         EnableAutoCommit = false,
-                        GroupId = _groupId,
+                        GroupId = _kafkaOptions.GroupId
                     })
                 .SetAvroKeyDeserializer(registryClient)
                 .SetAvroValueDeserializer(registryClient)
+                
                 .Build();
         }
 

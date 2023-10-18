@@ -18,11 +18,13 @@
     <PackageProjectUrl>https://kensobi.com/</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright 2023 Kenso Software</Copyright>
+    <Version>1.0.2-rc1</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\kensobi-logo.png">
       <Pack>True</Pack>
+
       <PackagePath>\</PackagePath>
     </None>
     <None Include="..\README.md">

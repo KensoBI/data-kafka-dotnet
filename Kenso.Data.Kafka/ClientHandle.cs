@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Kenso.Data.Kafka
 {
@@ -20,12 +21,15 @@ namespace Kenso.Data.Kafka
     {
         private readonly IProducer<byte[], byte[]> _kafkaProducer;
 
-        public ClientHandle(IConfiguration configuration)
+        public ClientHandle(IOptions<KafkaOptions> kafkaOptions)
         {
             var conf = new ProducerConfig();
-
-            configuration.GetSection("Kafka:ProducerSettings").Bind(conf);
-
+            conf.BootstrapServers = kafkaOptions.Value.BootstrapServers;
+            conf.SecurityProtocol = kafkaOptions.Value.SecurityProtocol;
+            conf.SslCaLocation = kafkaOptions.Value.SslCaLocation;
+            conf.SslCertificateLocation = kafkaOptions.Value.SslCertificateLocation;
+            conf.SslKeyLocation = kafkaOptions.Value.SslKeyLocation;
+            conf.SslEndpointIdentificationAlgorithm = kafkaOptions.Value.SslEndpointIdentificationAlgorithm;
             _kafkaProducer = new ProducerBuilder<byte[], byte[]>(conf).Build();
         }
 
