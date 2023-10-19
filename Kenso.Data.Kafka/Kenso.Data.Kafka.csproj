@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://kensobi.com/</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <Copyright>Copyright 2023 Kenso Software</Copyright>
-    <Version>1.0.2-rc1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
