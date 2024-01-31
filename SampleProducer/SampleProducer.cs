@@ -19,7 +19,7 @@ public class SampleProducer
 
     public void PublishMeasurement(MeasurementRecord measurement)
     {
-        var key = $"{measurement.Device}:{measurement.PartNumber}:{measurement.CharacteristicName}";
+        var key = $"{measurement.AssetName}:{measurement.PartNumber}:{measurement.CharacteristicName}";
         _kafkaProducer.Produce(new Message<string, MeasurementRecord>
             {
                 Key = key,

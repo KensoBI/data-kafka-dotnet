@@ -37,8 +37,8 @@ sampleProducer.PublishMeasurement(new MeasurementRecord
     LslWarn = 6.0m,
     Unit = "mm",
     Deviation = 1.2m,
-    Device = "exampleDevice",
-    Operator = "exampleOperator"
+    AssetName = "exampleDevice",
+    OperatorName = "exampleOperator"
 });
 
 Console.ReadLine();
